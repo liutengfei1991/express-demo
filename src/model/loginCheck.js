@@ -5,8 +5,6 @@ module.exports = (req,res,next)=>{
     console.log(token)
 	//用 加密密钥 解密，获得信息，包括生成及失效日期（如果设置了失效时间）
     jwt.verify(token, "secret", function(err, decoded) {
-        console.log(decoded)
-        console.log(err.message)
         if(decoded && decoded.exp - Date.now() / 1000 < 0) {
             console.log(1)
             res.json(
