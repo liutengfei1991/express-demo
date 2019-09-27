@@ -28,6 +28,6 @@ router.post('/login', function(req, res, next) {
 			new ErrorModel('登录失败')
 		)
 	})
-});
+})
 
-module.exports = router;
+module.exports = router
