@@ -1,15 +1,16 @@
 var express = require('express');
 var router = express.Router();
-const { getList, getDetail } = require('../controller/blogs')
+const { getList, getDetail, delBlog } = require('../controller/blogs')
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const loginCheck = require("../model/loginCheck")
 
 // 博客列表
 router.get('/list', loginCheck, function(req, res, next) {
-	const author = req.query.author || ''
-	const keyword = req.query.keyword || ''
+	let author = req.query.author || ''
+	let keyword = req.query.keyword || ''
+	console.log(req.userInfo.username)
 	// 强制查询自己的博客
-	// author = req.session.username
+	author = req.userInfo.username
 	const result = getList(author, keyword)
 	result.then(listData => {
 		res.json(
@@ -27,7 +28,16 @@ router.get('/detail', function(req, res, next) {
 		)
 	})
 });
-
+// 删除路由
+router.post('/del', loginCheck, function(req, res, next) {
+	const id = req.body.id
+	const result = delBlog(id)
+	result.then(delData => {
+		res.json(
+			new SuccessModel(delData)
+		)
+	})
+});
 
 
 module.exports = router;

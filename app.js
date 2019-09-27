@@ -1,7 +1,8 @@
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
-var cookieParser = require('cookie-parser');
+var fs = require('fs');
+// var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 // const session = require('express-session')
 // const RedisStore = require('connect-redis')(session)
@@ -21,24 +22,22 @@ app.use(cors({
 	credentials: true
 }))
 
-// redis - s
-// const redisClient = require('./src/db/redis')
-// const sessionStore = new RedisStore({
-// 	client: redisClient
-// })
-// app.use(session({
-// 	resave: true,
-// 	saveUninitialized: true,
-// 	secret: 'Wjionl#32231',
-// 	cookie: {
-// 		// path: '/', // 默认配置
-// 		// httpOnly: true, // 默认配置
-// 		maxAge: 24 * 60 * 60 * 1000,
-// 		secure: false
-// 	},
-// 	store: sessionStore
-// }))
-// redis - e
+// 访问日志----start
+const ENV = process.env.NODE_ENV
+if (ENV !== 'production') {
+	// 测试环境
+	app.use(logger('dev'));
+} else {
+  const logFileName = path.join(__dirname, 'src', 'logs', 'access.log')
+  
+	const writeStream = fs.createWriteStream(logFileName, {
+		flags: 'a'
+	})
+	app.use(logger('combined', {
+		stream: writeStream
+	}));
+}
+// 访问日志----end
 
 Routers(app)
 JwtToken(app)
